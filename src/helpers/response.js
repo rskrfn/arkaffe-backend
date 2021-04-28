@@ -5,7 +5,7 @@ module.exports = (
   status = 200,
   success = true,
 ) => {
-  return response.status(status).send({
+  return response.status(status).json({
     success,
     message: message || 'Success',
     ...aditionalData,
