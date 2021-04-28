@@ -52,7 +52,6 @@ const getUserByEmail = (email) => {
   });
 };
 
-
 module.exports = {
   createAccountModel,
   checkEmailModel,

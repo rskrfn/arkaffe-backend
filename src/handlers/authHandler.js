@@ -33,7 +33,7 @@ const Login = async (req, res) => {
   const { email, password } = req.body || '';
   const userTaken = (await authModel.getUserByEmail(email)) || [];
   if (userTaken.length < 1) {
-    response(res, 'user does not exist', {}, 403, false);
+    responseStandard(res, 'user does not exist', {}, 403, false);
     return;
   }
   authModel
@@ -41,10 +41,10 @@ const Login = async (req, res) => {
     .then((result) => {
       bcrypt.compare(password, result[0].password, (err, passwordValid) => {
         if (err) {
-          response(res, err, {}, 500, false);
+          responseStandard(res, err, {}, 500, false);
         }
         if (!passwordValid) {
-          response(res, 'wrong password', {}, 403, false);
+          responseStandard(res, 'wrong password', {}, 403, false);
         }
         if (passwordValid) {
           const { id, username, role_id } = result[0];
@@ -53,11 +53,11 @@ const Login = async (req, res) => {
             expiresIn: process.env.EXPIRE,
             issuer: process.env.ISSUER,
           };
-          jwt.sign(payload, procces.env.SECRET_KEY, options, (err, token) => {
+          jwt.sign(payload, process.env.SECRET_KEY, options, (err, token) => {
             if (err) {
-              response(res, err, {}, 500, false);
+              responseStandard(res, err, {}, 500, false);
             }
-            response(
+            responseStandard(
               res,
               'success',
               { id, username, role: role_id, token },
@@ -69,11 +69,11 @@ const Login = async (req, res) => {
       });
     })
     .catch((err) => {
-      response(res, err, 500, false);
+      responseStandard(res, err, 500, false);
     });
 };
 
 module.exports = {
   Register,
-  Login
+  Login,
 };
