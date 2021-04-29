@@ -51,7 +51,7 @@ const createProduct = async (req, res) => {
       !stockSize ||
       !deliveryId
     ) {
-      responseStandard(res, 'some field canot be empty', {}, 200, false);
+      responseStandard(res, 'some field canot be empty', {}, 400, false);
       return;
     }
 

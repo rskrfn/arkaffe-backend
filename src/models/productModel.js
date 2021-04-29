@@ -1,5 +1,4 @@
 const connect = require('../database/dbMySql');
-const { get } = require('../routers/productRouter');
 
 const getProduct = (searchValue, category) => {
   return new Promise((resolve, reject) => {
