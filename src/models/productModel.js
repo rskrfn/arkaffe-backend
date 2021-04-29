@@ -17,7 +17,7 @@ const getProduct = (searchValue, category) => {
 
 const getProductById = (id) => {
   return new Promise((resolve, reject) => {
-    const queryString = 'SELECT * FROM product WHERE id=?';
+    const queryString = 'SELECT * FROM product WHERE id =?';
 
     connect.query(queryString, id, (err, result) => {
       if (err) {
@@ -89,7 +89,7 @@ const deleteProduct = (productId) => {
 };
 
 const getProductSize = (productId) => {
-  return new Promise(() => {
+  return new Promise((resolve, reject) => {
     const queryString = 'SELECT * FROM product_size WHERE product_id=?';
 
     connect.query(queryString, productId, (err, result) => {
@@ -103,7 +103,7 @@ const getProductSize = (productId) => {
 };
 
 const getProductDelivery = (productId) => {
-  return new Promise(() => {
+  return new Promise((resolve, reject) => {
     const queryString = 'SELECT * FROM product_delivery WHERE product_id=?';
 
     connect.query(queryString, productId, (err, result) => {

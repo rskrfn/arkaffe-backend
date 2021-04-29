@@ -13,7 +13,7 @@ Router.post(
   productHandler.createProduct,
 );
 
-Router.patch('/', productHandler.updateProduct);
+Router.patch('/:productId', productHandler.updateProduct);
 
 Router.delete('/:productId', productHandler.deleteProduct);
 

@@ -70,77 +70,77 @@ const createProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  try {
-    const id = req.query;
-    const productTaken = (await productModel.getProductById(id)) || [];
+  const { productId } = req.params;
 
-    console.log(productTaken);
-  } catch (err) {
-    return res.status(500).send(err);
+  const {
+    name,
+    price,
+    description,
+    stock,
+    sizeId,
+    stockSize,
+    deliveryId,
+  } = req.body;
+
+  const sizes = sizeId.split(',');
+  const deliveries = deliveryId.split(',');
+
+  const productTaken = (await productModel.getProductById(productId)) || [];
+
+  if (!productTaken) {
+    responseStandard(res, 'product not found');
   }
-  // const {
-  //   name,
-  //   price,
-  //   description,
-  //   stock,
-  //   sizeId,
-  //   stockSize,
-  //   deliveryId,
-  // } = req.body;
 
-  // const sizes = sizeId.split(',');
-  // const deliveries = deliveryId.split(',');
+  if (productTaken) {
+    const updateProduct = await productModel.updateProduct(
+      name,
+      price,
+      description,
+      stock,
+      productId,
+    );
 
-  // if (!productTaken) {
-  //   responseStandard(res, 'product not found');
-  // }
+    if (updateProduct) {
+      const productSizeTaken =
+        (await productModel.getProductSize(productId)) || [];
 
-  // if (productTaken) {
-  //   const updateProduct = await productModel.updateProduct(
-  //     name,
-  //     price,
-  //     description,
-  //     stock,
-  //     productId,
-  //   );
+      console.log(productSizeTaken);
 
-  //   if (updateProduct) {
-  //     const productSizeTaken =
-  //       (await productModel.getProductSize(productId)) || [];
+      const productDeliverytaken =
+        (await productModel.getProductDelivery(productId)) || [];
 
-  //     const productDeliverytaken =
-  //       (await productModel.getProductDelivery(productId)) || [];
+      console.log(productDeliverytaken);
 
-  //     if (productSizeTaken && productDeliverytaken) {
-  //       const deleteProductSize = await productModel.deleteProductSize(
-  //         productId,
-  //       );
+      if (productSizeTaken && productDeliverytaken) {
+        const deleteProductSize = await productModel.deleteProductSize(
+          productId,
+        );
 
-  //       const deleteProductDelivery = await productModel.deleteProductDelivery(
-  //         productId,
-  //       );
+        const deleteProductDelivery = await productModel.deleteProductDelivery(
+          productId,
+        );
 
-  //       if (deleteProductSize && deleteProductDelivery) {
-  //         const createProductSize = await productModel.createProductSize(
-  //           sizes,
-  //           productId,
-  //           stockSize,
-  //         );
+        if (deleteProductSize && deleteProductDelivery) {
+          const createProductSize = await productModel.createProductSize(
+            sizes,
+            productId,
+            stockSize,
+          );
 
-  //         if (createProductSize) {
-  //           productModel
-  //             .createProductDelivery(deliveries, productId)
-  //             .then((result) => {
-  //               responseStandard(res, 'product updated', {}, 200, true);
-  //             })
-  //             .catch((err) => {
-  //               responseStandard(res, err, {}, 500, false);
-  //             });
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+          if (createProductSize) {
+            productModel
+              .createProductDelivery(deliveries, productId)
+              .then((result) => {
+                responseStandard(res, 'product updated', {}, 200, true);
+              })
+              .catch((err) => {
+                responseStandard(res, err, {}, 500, false);
+              });
+          }
+        }
+      }
+    }
+  }
 };
 
 const deleteProduct = async (req, res) => {
