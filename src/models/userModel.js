@@ -1,8 +1,8 @@
-const connect = require("../database/dbMysql")
+const connect = require('../database/dbMysql');
 
-const getAccountInfo =(data) => {
+const getAccountInfo = (data) => {
   return new Promise((resolve, reject) => {
-    const qs = `SELECT username,phone_number,role,photo_profile FROM tb_account WHERE id_account = ?`;
+    const qs = `SELECT email,username AS display_name,first_name,last_name,phone AS phone_number,role_id,photo_profile AS avatar, gender, birthdate AS birthday, address_user AS address FROM users WHERE id = ?`;
     connect.query(qs, data, (err, result) => {
       if (err) {
         reject(err);
@@ -12,26 +12,17 @@ const getAccountInfo =(data) => {
     });
   });
 };
-const updateAccount = (qsValue, id) => {
+const updateAccount = (data, id) => {
   return new Promise((resolve, reject) => {
-    const qs = `UPDATE tb_account SET ? WHERE id_account = ?`;
-    connect.query(qs, [qsValue, id], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        const qsUpdated =
-          'SELECT username,phone_number,role,photo_profile from tb_account WHERE id_account = ?';
-        connect.query(qsUpdated, qsValue, (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve((result = { ...result, ...data }));
-          }
-        });
-      }
+    const queryString = 'UPDATE users SET WHERE id = ?';
+    connect.query(queryString, [data, id], (error, result) => {
+      if (error) return reject(error);
+      if (result.affectedRows > 0) return resolve(true);
+      return resolve(false);
     });
   });
 };
+
 const deleteAccount = (qsValue) => {
   return new Promise((resolve, reject) => {
     const qs = `DELETE FROM tb_account WHERE id_account= ? `;
