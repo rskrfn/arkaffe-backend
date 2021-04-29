@@ -7,13 +7,32 @@ const {
 
 Router.get('/', productHandler.getProduct);
 
+Router.get('/:productId', productHandler.getProductInfo);
+
 Router.post(
   '/',
   errorMulterHandler(uploadProductImage.single('image')),
   productHandler.createProduct,
 );
 
-Router.patch('/:productId', productHandler.updateProduct);
+Router.post(
+  '/upload',
+  errorMulterHandler(uploadProductImage.single('image')),
+  (req, res) => {
+    const { file } = req;
+    const url = `/products/${file.filename}`;
+    res.status(200).json({
+      msg: 'Upload Success',
+      url,
+    });
+  },
+);
+
+Router.patch(
+  '/:productId',
+  errorMulterHandler(uploadProductImage.single('image')),
+  productHandler.updateProduct,
+);
 
 Router.delete('/:productId', productHandler.deleteProduct);
 

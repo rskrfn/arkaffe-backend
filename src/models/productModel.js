@@ -1,4 +1,5 @@
 const connect = require('../database/dbMySql');
+const { get } = require('../routers/productRouter');
 
 const getProduct = (searchValue, category) => {
   return new Promise((resolve, reject) => {
@@ -6,6 +7,48 @@ const getProduct = (searchValue, category) => {
       'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?';
 
     connect.query(queryString, [searchValue, category], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const getProductInfo = (productId) => {
+  return new Promise((resolve, reject) => {
+    const queryString = `SELECT p.name, p.price, p.description, p.image_product AS 'imageProduct', p.start_delivery AS 'startDelivery', p.end_delivery FROM product p WHERE p.id =?`;
+
+    connect.query(queryString, productId, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const getSizeInfo = (productId) => {
+  return new Promise((resolve, reject) => {
+    const queryString = `SELECT GROUP_CONCAT(size_id SEPARATOR ', ') AS size FROM product_size WHERE product_id =?`;
+
+    connect.query(queryString, productId, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const getDeliveryInfo = (productId) => {
+  return new Promise((resolve, reject) => {
+    const queryString = `SELECT GROUP_CONCAT(delivery_id SEPARATOR ', ') AS delivery FROM product_delivery WHERE product_id =?`;
+
+    connect.query(queryString, productId, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -57,12 +100,12 @@ const createProduct = (product) => {
   });
 };
 
-const updateProduct = (name, price, description, stock, productId) => {
+const updateProduct = (name, price, description, stock, url, productId) => {
   return new Promise((resolve, reject) => {
     const queryString =
-      'UPDATE product p SET p.name=?, p.price=?, p.description=?, p.stock=? WHERE p.id=?';
+      'UPDATE product p SET p.name=?, p.price=?, p.description=?, p.stock=?, p.image_product=? WHERE p.id=?';
 
-    const data = [name, price, description, stock, productId];
+    const data = [name, price, description, stock, url, productId];
 
     connect.query(queryString, data, (err, result) => {
       if (err) {
@@ -197,4 +240,7 @@ module.exports = {
   createProductDelivery,
   deleteProductSize,
   deleteProductDelivery,
+  getProductInfo,
+  getSizeInfo,
+  getDeliveryInfo,
 };
