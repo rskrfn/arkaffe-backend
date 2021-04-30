@@ -45,7 +45,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadProductImage = multer({
-  productStorage,
+  storage: productStorage,
   limits,
   fileFilter,
 });
@@ -59,7 +59,7 @@ const uploadAvatarImage = multer({
 const errorMulterHandler = (uploadFunction) => {
   return (req, res, next) => {
     uploadFunction(req, res, function (err) {
-      if (err) return responseStandard(res, err, 500);
+      if (err) return responseStandard(res, err, {}, 500, false);
       next();
     });
   };
