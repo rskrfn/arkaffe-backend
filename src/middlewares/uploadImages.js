@@ -14,6 +14,18 @@ const productStorage = multer.diskStorage({
   },
 });
 
+const userStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/images');
+  },
+  filename: (req, file, cb) => {
+    const nameFormat = `product-${Date.now()}${path.extname(
+      file.originalname,
+    )}`;
+    cb(null, nameFormat);
+  },
+});
+
 const bytes = 1000;
 const power = (byte, n) => {
   if (n) return byte * power(byte, n - 1);
@@ -38,6 +50,12 @@ const uploadProductImage = multer({
   fileFilter,
 });
 
+const uploadAvatarImage = multer({
+  userStorage,
+  limits,
+  fileFilter,
+});
+
 const errorMulterHandler = (uploadFunction) => {
   return (req, res, next) => {
     uploadFunction(req, res, function (err) {
@@ -51,4 +69,5 @@ const errorMulterHandler = (uploadFunction) => {
 module.exports = {
   errorMulterHandler,
   uploadProductImage,
+  uploadAvatarImage,
 };

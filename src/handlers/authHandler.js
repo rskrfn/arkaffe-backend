@@ -17,13 +17,15 @@ const Register = async (req, res) => {
         return responseStandard(res, 'Email already exists', {}, 400, false);
       }
     }
+    const emailSplit = email.split('@');
     const users = {
+      username: emailSplit[0],
       email: email,
       phone: phone,
       password: hashedPassword,
     };
     await authModel.createAccountModel(users);
-    return responseStandard(res, 'user resgistered', {}, 200, true);
+    return responseStandard(res, 'user registered', {}, 200, true);
   } catch (err) {
     responseStandard(res, err.message, {}, 400, false);
   }
@@ -73,7 +75,21 @@ const Login = async (req, res) => {
     });
 };
 
+const resetPassword = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { newPassword } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    await authModel.resetPassword([hashedPassword, id]);
+    return responseStandard(res, 'Reset Password successfully!', {}, 200, true);
+  } catch (error) {
+    responseStandard(res, error, 500, false);
+  }
+};
+
 module.exports = {
   Register,
   Login,
+  resetPassword,
 };

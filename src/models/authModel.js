@@ -52,9 +52,23 @@ const getUserByEmail = (email) => {
   });
 };
 
+const resetPassword = (password) => {
+  return new Promise((resolve, reject) => {
+    const queryString = 'UPDATE users SET password = ? WHERE id = ?';
+    connect.query(queryString, password, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   createAccountModel,
   checkEmailModel,
   checkPhoneModel,
   getUserByEmail,
+  resetPassword,
 };
