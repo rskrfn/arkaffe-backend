@@ -11,12 +11,19 @@ app.listen(process.env.PORT, () => {
   console.log('Server Running at Port', process.env.PORT);
 });
 
+// Test Connection
+app.get('/', (req, res) => {
+  res.json({
+    succes: true,
+    message: 'Backend is Running now!!!',
+  });
+});
+
 const jsonParser = express.json();
-const urlEncodedParser = express.urlencoded();
 
 app.use(logger('dev'));
 app.use(jsonParser);
-app.use(urlEncodedParser);
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
 app.use(Router);
