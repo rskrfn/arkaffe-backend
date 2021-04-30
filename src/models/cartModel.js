@@ -1,4 +1,3 @@
-const { query } = require('../database/dbMySql');
 const connect = require('../database/dbMySql');
 
 const addCart = (userId) => {
