@@ -15,19 +15,6 @@ Router.post(
   productHandler.createProduct,
 );
 
-Router.post(
-  '/upload',
-  errorMulterHandler(uploadProductImage.single('image')),
-  (req, res) => {
-    const { file } = req;
-    const url = `/products/${file.filename}`;
-    res.status(200).json({
-      msg: 'Upload Success',
-      url,
-    });
-  },
-);
-
 Router.patch(
   '/:productId',
   errorMulterHandler(uploadProductImage.single('image')),
