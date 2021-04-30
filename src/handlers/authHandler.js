@@ -77,7 +77,7 @@ const Login = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { id } = req.data;
+    const { id } = req.user;
     const { newPassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
