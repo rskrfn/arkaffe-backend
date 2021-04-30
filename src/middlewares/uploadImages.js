@@ -59,6 +59,7 @@ const uploadAvatarImage = multer({
 const errorMulterHandler = (uploadFunction) => {
   return (req, res, next) => {
     uploadFunction(req, res, function (err) {
+      console.log(err);
       if (err) return responseStandard(res, err, {}, 500, false);
       next();
     });

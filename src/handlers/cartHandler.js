@@ -11,28 +11,41 @@ const createCart = async (req, res) => {
       return;
     }
 
-    const createCart = await cartModel.addCart(userId);
+    const cartTaken = (await cartModel.getCartUser(userId)) || [];
 
-    const cartTaken = await cartModel.getCartUser(userId);
+    if (cartTaken.length < 1) {
+      const createCart = await cartModel.addCart(userId);
 
-    const index = cartTaken.length - 1;
+      const taken = (await cartModel.getCartUser(userId)) || [];
+      const cartId = taken[0].id;
 
-    const cartId = cartTaken[index].id;
-    // console.log(cartTaken);
-    // console.log(cartId);
+      const createCartItem = await cartModel.addCartItem(
+        cartId,
+        productId,
+        quantity,
+        sizeId,
+      );
 
-    const createCartItem = await cartModel.addCartItem(
-      cartId,
-      productId,
-      quantity,
-      sizeId,
-    );
+      if (createCart && createCartItem) {
+        return responseStandard(res, 'product added to cart', {}, 200, true);
+      }
+    }
 
-    if (createCart && createCartItem) {
-      return responseStandard(res, 'product added to cart', {}, 200, true);
+    if (cartTaken.length > 0) {
+      const cartId = cartTaken[0].id;
+      const createCartItem = await cartModel.addCartItem(
+        cartId,
+        productId,
+        quantity,
+        sizeId,
+      );
+
+      if (createCartItem) {
+        return responseStandard(res, 'product added to cart', {}, 200, true);
+      }
     }
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     responseStandard(res, err, {}, 500, false);
   }
 };
@@ -41,10 +54,12 @@ const deletecart = async (req, res) => {
   try {
     const { userId, productId } = req.params;
 
-    const deleteCart = await cartModel.deleteCart(userId);
-    const deleteCartItem = await cartModel.deleteCartItem(productId);
+    const cartTaken = (await cartModel.getCartUser(userId)) || [];
+    const cartId = cartTaken[0].id;
 
-    if (deleteCart && deleteCartItem) {
+    const deleteCartItem = await cartModel.deleteCartItem(cartId, productId);
+
+    if (deleteCartItem) {
       return responseStandard(res, 'product removed from cart', {}, 200, true);
     }
   } catch (err) {

@@ -1,16 +1,52 @@
 const connect = require('../database/dbMySql');
 
-const getProduct = (searchValue, category) => {
+const getProduct = (
+  searchValue,
+  category,
+  sortBy,
+  order,
+  limitPage,
+  offset,
+) => {
   return new Promise((resolve, reject) => {
-    const queryString =
-      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?';
+    let queryString = [
+      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
+    ];
 
-    connect.query(queryString, [searchValue, category], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
+    let paramData = [searchValue, category];
+
+    if (sortBy && order) {
+      queryString.push('ORDER BY ? ?');
+      paramData.push(sortBy, order);
+    }
+
+    queryString.push('LIMIT ? OFFSET ?');
+    paramData.push(limitPage, offset);
+
+    let total = 0;
+
+    connect.query(queryString.join(' '), paramData, (err, result) => {
+      if (err) return reject(err);
+
+      let queryCount = [
+        'SELECT COUNT(*) AS total FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
+      ];
+      if (sortBy && order) {
+        queryCount.push('ORDER BY ? ?');
       }
+
+      queryCount.push('LIMIT ? OFFSET ?');
+
+      connect.query(
+        queryCount.join(' '),
+        paramData,
+        (errCount, resultCount) => {
+          if (errCount) return reject(errCount);
+
+          total = resultCount[0].total;
+          resolve({ data: result, total });
+        },
+      );
     });
   });
 };

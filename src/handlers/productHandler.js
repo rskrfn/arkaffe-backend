@@ -1,20 +1,86 @@
-// const mysql = require('mysql');
+const mysql = require('mysql');
 const productModel = require('../models/productModel');
 const responseStandard = require('../helpers/response');
 
 const getProduct = async (req, res) => {
-  const { search, category } = req.query || '';
+  try {
+    const { baseUrl } = req;
+    const { search, category, sort, limit, page } = req.query || '';
 
-  const searchValue = `%${search || ''}%`;
+    const searchValue = `%${search || ''}%`;
+    let sortValue = sort?.split('-') || null;
+    let sortBy = null;
+    let order = null;
 
-  productModel
-    .getProduct(searchValue, category)
-    .then((result) => {
-      responseStandard(res, 'product information', result, 200, true);
-    })
-    .catch((err) => {
-      responseStandard(res, err, {}, 500, false);
-    });
+    if (!sort) {
+      sortValue = ['id', 'az'];
+    }
+
+    if (sortValue) {
+      switch (sortValue[0].toLowerCase()) {
+        case 'id':
+          sortBy = mysql.raw('p.id');
+          break;
+        case 'price':
+          sortBy = mysql.raw('p.price');
+          break;
+        default:
+          sortBy = null;
+          break;
+      }
+
+      order =
+        sortValue[1]?.toLowerCase() === 'az'
+          ? mysql.raw('ASC')
+          : mysql.raw('DESC');
+    }
+
+    const pageNumber = Number(page) || 1;
+    const limitPage = Number(limit) || 3;
+    const offset = (pageNumber - 1) * limitPage;
+
+    const productTaken =
+      (await productModel.getProduct(
+        searchValue,
+        category,
+        sortBy,
+        order,
+        limitPage,
+        offset,
+      )) || [];
+
+    console.log(productTaken);
+
+    const totalPage = Math.ceil(productTaken.total / limitPage);
+
+    const info = {
+      total: productTaken.total,
+      current_page: pageNumber,
+      total_page: totalPage,
+      next:
+        pageNumber === totalPage
+          ? null
+          : `${baseUrl}?page=${pageNumber + 1}&limit=${limitPerPage}`,
+      prev:
+        pageNumber === 1
+          ? null
+          : `${baseUrl}?page=${pageNumber - 1}&limit=${limitPerPage}`,
+    };
+
+    return responseStandard(
+      res,
+      `${category} product list`,
+      {
+        data: productTaken.data,
+        info,
+      },
+      200,
+      true,
+    );
+  } catch (err) {
+    console.log(err);
+    responseStandard(res, err, {}, 500, false);
+  }
 };
 
 const createProduct = async (req, res) => {
@@ -232,20 +298,25 @@ const getProductInfo = async (req, res) => {
     const productInfoTaken =
       (await productModel.getProductInfo(productId)) || [];
 
+    if (productInfoTaken.length < 1) {
+      responseStandard(res, 'product not found', {}, 404, false);
+      return;
+    }
+
     const productSizeTaken = (await productModel.getSizeInfo(productId)) || [];
 
     const productDeliveryTaken =
       (await productModel.getDeliveryInfo(productId)) || [];
+
+    if (!productInfoTaken && !productSizeTaken && !productDeliveryTaken) {
+      responseStandard(res, 'product not found', {}, 404, false);
+    }
 
     const productInfo = {
       ...productInfoTaken[0],
       ...productSizeTaken[0],
       ...productDeliveryTaken[0],
     };
-
-    if (!productInfoTaken && !productSizeTaken && !productDeliveryTaken) {
-      responseStandard(res, 'product not found', {}, 404, false);
-    }
 
     if (productInfoTaken && productSizeTaken && productDeliveryTaken) {
       return responseStandard(
