@@ -1,9 +1,22 @@
 const multer = require('multer');
 const path = require('path');
+const responseStandard = require('../helpers/response');
 
 const productStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './public/products');
+  },
+  filename: (req, file, cb) => {
+    const nameFormat = `product-${Date.now()}${path.extname(
+      file.originalname,
+    )}`;
+    cb(null, nameFormat);
+  },
+});
+
+const userStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/images');
   },
   filename: (req, file, cb) => {
     const nameFormat = `product-${Date.now()}${path.extname(
@@ -32,7 +45,13 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadProductImage = multer({
-  productStorage,
+  storage: productStorage,
+  limits,
+  fileFilter,
+});
+
+const uploadAvatarImage = multer({
+  userStorage,
   limits,
   fileFilter,
 });
@@ -40,7 +59,8 @@ const uploadProductImage = multer({
 const errorMulterHandler = (uploadFunction) => {
   return (req, res, next) => {
     uploadFunction(req, res, function (err) {
-      if (err) return sendError(res, 500, err);
+      console.log(err);
+      if (err) return responseStandard(res, err, {}, 500, false);
       next();
     });
   };
@@ -49,4 +69,5 @@ const errorMulterHandler = (uploadFunction) => {
 module.exports = {
   errorMulterHandler,
   uploadProductImage,
+  uploadAvatarImage,
 };
