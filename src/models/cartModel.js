@@ -28,20 +28,6 @@ const getCartUser = (userId) => {
   });
 };
 
-const deleteCart = (userId) => {
-  return new Promise((resolve, reject) => {
-    const queryString = 'DELETE FROM cart WHERE users_id = ?';
-
-    connect.query(queryString, userId, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
 const addCartItem = (cartId, productId, quantity, sizeId) => {
   return new Promise((resolve, reject) => {
     const queryString =
@@ -61,11 +47,12 @@ const addCartItem = (cartId, productId, quantity, sizeId) => {
   });
 };
 
-const deleteCartItem = (productId) => {
+const deleteCartItem = (cartId, productId) => {
   return new Promise((resolve, reject) => {
-    const queryString = 'DELETE FROM cart_item WHERE product_id = ?';
+    const queryString =
+      'DELETE FROM cart_item WHERE cart_id = ? AND product_id = ?';
 
-    connect.query(queryString, productId, (err, result) => {
+    connect.query(queryString, [cartId, productId], (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -79,6 +66,5 @@ module.exports = {
   addCart,
   getCartUser,
   addCartItem,
-  deleteCart,
   deleteCartItem,
 };
