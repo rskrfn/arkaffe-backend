@@ -60,11 +60,11 @@ const getProduct = async (req, res) => {
       next:
         pageNumber === totalPage
           ? null
-          : `${baseUrl}?page=${pageNumber + 1}&limit=${limitPerPage}`,
+          : `${baseUrl}?page=${pageNumber + 1}&limit=${limitPage}`,
       prev:
         pageNumber === 1
           ? null
-          : `${baseUrl}?page=${pageNumber - 1}&limit=${limitPerPage}`,
+          : `${baseUrl}?page=${pageNumber - 1}&limit=${limitPage}`,
     };
 
     return responseStandard(
