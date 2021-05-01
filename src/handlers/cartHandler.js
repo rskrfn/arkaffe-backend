@@ -11,38 +11,18 @@ const createCart = async (req, res) => {
       return;
     }
 
-    const cartTaken = (await cartModel.getCartUser(userId)) || [];
+    const createCart = await cartModel.addCart(userId);
 
-    if (cartTaken.length < 1) {
-      const createCart = await cartModel.addCart(userId);
+    if (createCart) {
+      const cartTaken = (await cartModel.getCartUser(userId)) || [];
 
-      const taken = (await cartModel.getCartUser(userId)) || [];
-      const cartId = taken[0].id;
+      const index = cartTaken.length - 1;
 
-      const createCartItem = await cartModel.addCartItem(
-        cartId,
-        productId,
-        quantity,
-        sizeId,
-      );
+      const cartId = cartTaken[index].id;
 
-      if (createCart && createCartItem) {
-        return responseStandard(res, 'product added to cart', {}, 200, true);
-      }
-    }
+      cartModel.addCartItem(cartId, productId, quantity, sizeId);
 
-    if (cartTaken.length > 0) {
-      const cartId = cartTaken[0].id;
-      const createCartItem = await cartModel.addCartItem(
-        cartId,
-        productId,
-        quantity,
-        sizeId,
-      );
-
-      if (createCartItem) {
-        return responseStandard(res, 'product added to cart', {}, 200, true);
-      }
+      responseStandard(res, 'product added to cart'), {}, 200, true;
     }
   } catch (err) {
     console.log(err);
