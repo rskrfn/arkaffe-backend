@@ -5,7 +5,7 @@ const getProduct = (
   category,
   sortBy,
   order,
-  limitPage,
+  pageNumber,
   offset,
 ) => {
   return new Promise((resolve, reject) => {
@@ -21,7 +21,7 @@ const getProduct = (
     }
 
     queryString.push('LIMIT ? OFFSET ?');
-    paramData.push(limitPage, offset);
+    paramData.push(pageNumber, offset);
 
     let total = 0;
 
@@ -34,8 +34,6 @@ const getProduct = (
       if (sortBy && order) {
         queryCount.push('ORDER BY ? ?');
       }
-
-      queryCount.push('LIMIT ? OFFSET ?');
 
       connect.query(
         queryCount.join(' '),

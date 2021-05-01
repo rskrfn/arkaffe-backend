@@ -36,7 +36,7 @@ const getProduct = async (req, res) => {
     }
 
     const pageNumber = Number(page) || 1;
-    const limitPage = Number(limit) || 3;
+    const limitPage = Number(limit) || 4;
     const offset = (pageNumber - 1) * limitPage;
 
     const productTaken =
@@ -49,8 +49,6 @@ const getProduct = async (req, res) => {
         offset,
       )) || [];
 
-    console.log(productTaken);
-
     const totalPage = Math.ceil(productTaken.total / limitPage);
 
     const info = {
@@ -60,11 +58,15 @@ const getProduct = async (req, res) => {
       next:
         pageNumber === totalPage
           ? null
-          : `${baseUrl}?page=${pageNumber + 1}&limit=${limitPage}`,
+          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
+              pageNumber + 1
+            }&limit=${limitPage}`,
       prev:
         pageNumber === 1
           ? null
-          : `${baseUrl}?page=${pageNumber - 1}&limit=${limitPage}`,
+          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
+              pageNumber - 1
+            }&limit=${limitPage}`,
     };
 
     return responseStandard(

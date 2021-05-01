@@ -20,7 +20,7 @@ const createCart = async (req, res) => {
 
       const cartId = cartTaken[index].id;
 
-      cartModel.addCartItem(cartId, productId, quantity, sizeId);
+      await cartModel.addCartItem(cartId, productId, quantity, sizeId);
 
       responseStandard(res, 'product added to cart'), {}, 200, true;
     }
