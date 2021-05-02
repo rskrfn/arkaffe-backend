@@ -1,28 +1,29 @@
 const authModel = require('../models/authModel');
 const responseStandard = require('../helpers/response');
-const jwt = require('jasonwebtoken');
+const jwt = require('jsonwebtoken');
 
 const authenticateToken = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
-    const token = authorization.split(' ')[1];
+    const token = authorization?.split(' ')[1];
 
     if (!token) {
       return responseStandard(res, 'No token provided', {}, 400, false);
     }
 
-    const verivy = jwt.verivy(token, process.env.SECRET_KEY);
-    if (!verivy) {
+    const verify = jwt.verify(token, process.env.SECRET_KEY);
+    if (!verify) {
       return responseStandard(res, 'Unauthorized access', {}, 403, false);
     }
 
     const tokenTaken = await authModel.getToken(token);
-    if (tokenTaken) {
+    if (tokenTaken.length > 0) {
       return responseStandard(res, 'You have to login', {}, 400, false);
     }
 
     return next();
   } catch (err) {
+    console.log(err);
     return responseStandard(res, err, {}, 500, false);
   }
 };

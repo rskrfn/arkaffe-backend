@@ -5,7 +5,9 @@ const {
   uploadProductImage,
 } = require('../middlewares/uploadImages');
 
-Router.get('/', productHandler.getProduct);
+const authToken = require('../middlewares/authentication');
+
+Router.get('/', authToken.authenticateToken, productHandler.getProduct);
 
 Router.get('/:productId', productHandler.getProductInfo);
 
