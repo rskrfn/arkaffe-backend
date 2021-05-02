@@ -116,8 +116,26 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const { authorization } = req.headers;
+
+    const token = authorization.split(' ')[1];
+
+    if (!token) {
+      return responseStandard(res, 'No token provided', {}, 400, false);
+    }
+
+    await authModel.setToken(token);
+    return responseStandard(res, 'Logout success', {}, 200, true);
+  } catch (err) {
+    return responseStandard(res, err, {}, 500, false);
+  }
+};
+
 module.exports = {
   Register,
   Login,
   resetPassword,
+  logout,
 };
