@@ -6,6 +6,27 @@ const bcrypt = require('bcrypt');
 const Register = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
+
+    if (!email || !phone || !password) {
+      return responseStandard(
+        res,
+        'some fields can not be empty',
+        {},
+        400,
+        false,
+      );
+    }
+
+    if (password.length < 8) {
+      return responseStandard(
+        res,
+        'password must be longer than 8 characters',
+        {},
+        400,
+        false,
+      );
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const phoneExist = await authModel.checkPhoneModel(phone);
@@ -49,7 +70,7 @@ const Login = async (req, res) => {
           responseStandard(res, 'wrong password', {}, 403, false);
         }
         if (passwordValid) {
-          const { id, username, role_id } = result[0];
+          const { id, username, email, photo_profile, role_id } = result[0];
           const payload = { id, username, role_id };
           const options = {
             expiresIn: process.env.EXPIRE,
@@ -61,8 +82,15 @@ const Login = async (req, res) => {
             }
             responseStandard(
               res,
-              'success',
-              { id, username, role: role_id, token },
+              'user logged in',
+              {
+                id,
+                username,
+                email,
+                displayPicture: photo_profile,
+                role: role_id,
+                token,
+              },
               200,
               true,
             );

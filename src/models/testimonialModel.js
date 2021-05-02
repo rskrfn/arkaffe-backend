@@ -1,12 +1,12 @@
 const connect = require('../database/dbMySql');
 
-const addTestimonial = (userId, description, rating) => {
+const addTestimonial = (testimonial) => {
   return new Promise((resolve, reject) => {
     const queryString = '';
   });
 };
 
-const editTestimonial = (description, rating) => {
+const editTestimonial = (description, rating, userId) => {
   return new Promise((resolve, reject) => {
     const queryString = '';
   });
