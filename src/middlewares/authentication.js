@@ -1,5 +1,6 @@
 const authModel = require('../models/authModel');
 const responseStandard = require('../helpers/response');
+const jwt = require('jasonwebtoken');
 
 const authenticateToken = async (req, res, next) => {
   try {
@@ -10,10 +11,14 @@ const authenticateToken = async (req, res, next) => {
       return responseStandard(res, 'No token provided', {}, 400, false);
     }
 
-    const tokenTaken = await authModel.getToken(token);
+    const verivy = jwt.verivy(token, process.env.SECRET_KEY);
+    if (!verivy) {
+      return responseStandard(res, 'Unauthorized access', {}, 403, false);
+    }
 
+    const tokenTaken = await authModel.getToken(token);
     if (tokenTaken) {
-      return responseStandard(res, 'Token is blacklisted', {}, 400, false);
+      return responseStandard(res, 'You have to login', {}, 400, false);
     }
 
     return next();
