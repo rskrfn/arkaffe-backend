@@ -8,11 +8,11 @@ const Register = async (req, res) => {
     const { email, phone, password } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const phoneExist = await authModel.checkPhoneModel(phone);
+    const phoneExist = await authModel.checkPhoneModel({ phone });
     if (phoneExist.length) {
       return responseStandard(res, 'Phone already exists', {}, 400, false);
     } else {
-      const emailExist = await authModel.checkEmailModel(email);
+      const emailExist = await authModel.checkEmailModel({ email });
       if (emailExist.length) {
         return responseStandard(res, 'Email already exists', {}, 400, false);
       }
@@ -24,8 +24,12 @@ const Register = async (req, res) => {
       phone: phone,
       password: hashedPassword,
     };
-    await authModel.createAccountModel(users);
-    return responseStandard(res, 'user registered', {}, 200, true);
+    const result = await authModel.createAccountModel(users);
+    if (result.length) {
+      return responseStandard(res, 'user registered', {}, 200, true);
+    } else {
+      return responseStandard(res, 'failed registered', {}, 400, true);
+    }
   } catch (err) {
     responseStandard(res, err.message, {}, 400, false);
   }
