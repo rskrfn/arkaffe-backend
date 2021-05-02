@@ -10,7 +10,7 @@ const Register = async (req, res) => {
     if (!email || !phone || !password) {
       return responseStandard(
         res,
-        'some fields can not be empty',
+        'Some fields can not be empty',
         {},
         400,
         false,
@@ -20,7 +20,7 @@ const Register = async (req, res) => {
     if (password.length < 8) {
       return responseStandard(
         res,
-        'password must be longer than 8 characters',
+        'Password must be longer than 8 characters',
         {},
         400,
         false,
@@ -29,14 +29,14 @@ const Register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const emailExist = await authModel.checkEmailModel(email);
+    if (emailExist.length) {
+      return responseStandard(res, 'Email already exists', {}, 400, false);
+    }
+
     const phoneExist = await authModel.checkPhoneModel(phone);
     if (phoneExist.length) {
       return responseStandard(res, 'Phone already exists', {}, 400, false);
-    } else {
-      const emailExist = await authModel.checkEmailModel(email);
-      if (emailExist.length) {
-        return responseStandard(res, 'Email already exists', {}, 400, false);
-      }
     }
     const emailSplit = email.split('@');
     const users = {
@@ -46,7 +46,7 @@ const Register = async (req, res) => {
       password: hashedPassword,
     };
     await authModel.createAccountModel(users);
-    return responseStandard(res, 'user registered', {}, 200, true);
+    return responseStandard(res, 'User registered', {}, 200, true);
   } catch (err) {
     responseStandard(res, err.message, {}, 400, false);
   }
@@ -56,7 +56,7 @@ const Login = async (req, res) => {
   const { email, password } = req.body || '';
   const userTaken = (await authModel.getUserByEmail(email)) || [];
   if (userTaken.length < 1) {
-    responseStandard(res, 'user does not exist', {}, 403, false);
+    responseStandard(res, 'User does not exist', {}, 403, false);
     return;
   }
   authModel
@@ -67,7 +67,7 @@ const Login = async (req, res) => {
           responseStandard(res, err, {}, 500, false);
         }
         if (!passwordValid) {
-          responseStandard(res, 'wrong password', {}, 403, false);
+          responseStandard(res, 'Wrong password', {}, 403, false);
         }
         if (passwordValid) {
           const { id, username, email, photo_profile, role_id } = result[0];
@@ -82,7 +82,7 @@ const Login = async (req, res) => {
             }
             responseStandard(
               res,
-              'user logged in',
+              'User logged in',
               {
                 id,
                 username,
