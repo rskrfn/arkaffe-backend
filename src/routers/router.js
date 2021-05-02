@@ -4,6 +4,7 @@ const productRouter = require('./productRouter');
 const cartRouter = require('./cartRouter');
 const userRouter = require('./userRouter');
 const transactionRouter = require('./transactionRouter');
+const testimonialRouter = require('../routers/testimonialRouter');
 const { authentikasi } = require('../middlewares/authorization');
 
 Router.use('/auth', authRouter);
@@ -11,5 +12,6 @@ Router.use('/product', productRouter);
 Router.use('/cart', cartRouter);
 Router.use('/profile', authentikasi, userRouter);
 Router.use('/transaction', transactionRouter);
+Router.use('/testimonial', testimonialRouter);
 
 module.exports = Router;
