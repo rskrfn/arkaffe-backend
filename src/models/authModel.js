@@ -65,10 +65,41 @@ const resetPassword = (password) => {
   });
 };
 
+const getToken = (token) => {
+  return new Promise((resolve, reject) => {
+    const queryString = 'SELECT * FROM token_blacklist WHERE token = ?';
+
+    connect.query(queryString, token, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const setToken = (token) => {
+  return new Promise((resolve, reject) => {
+    const queryString =
+      'INSERT INTO token_blacklist (token, expire) VALUES (?, NOW() + INTERVAL 3 HOUR)';
+
+    connect.query(queryString, token, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   createAccountModel,
   checkEmailModel,
   checkPhoneModel,
   getUserByEmail,
   resetPassword,
+  setToken,
+  getToken,
 };

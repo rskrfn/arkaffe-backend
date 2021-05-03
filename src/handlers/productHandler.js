@@ -36,7 +36,7 @@ const getProduct = async (req, res) => {
     }
 
     const pageNumber = Number(page) || 1;
-    const limitPage = Number(limit) || 3;
+    const limitPage = Number(limit) || 4;
     const offset = (pageNumber - 1) * limitPage;
 
     const productTaken =
@@ -49,8 +49,6 @@ const getProduct = async (req, res) => {
         offset,
       )) || [];
 
-    console.log(productTaken);
-
     const totalPage = Math.ceil(productTaken.total / limitPage);
 
     const info = {
@@ -60,11 +58,15 @@ const getProduct = async (req, res) => {
       next:
         pageNumber === totalPage
           ? null
-          : `${baseUrl}?page=${pageNumber + 1}&limit=${limitPerPage}`,
+          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
+              pageNumber + 1
+            }&limit=${limitPage}`,
       prev:
         pageNumber === 1
           ? null
-          : `${baseUrl}?page=${pageNumber - 1}&limit=${limitPerPage}`,
+          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
+              pageNumber - 1
+            }&limit=${limitPage}`,
     };
 
     return responseStandard(
@@ -117,7 +119,7 @@ const createProduct = async (req, res) => {
       !stockSize ||
       !deliveryId
     ) {
-      responseStandard(res, 'some field canot be empty', {}, 400, false);
+      responseStandard(res, 'Some field canot be empty', {}, 400, false);
       return;
     }
 
@@ -141,14 +143,14 @@ const createProduct = async (req, res) => {
 
     const createProduct = await productModel.createProduct(product);
     if (!createProduct) {
-      responseStandard(res, 'product failed to create', {}, 400, false);
+      responseStandard(res, 'Product failed to create', {}, 400, false);
       return;
     }
 
     const productTaken = (await productModel.getProductByName(name)) || [];
 
     if (!productTaken) {
-      responseStandard(res, 'product not dount', {}, 404, false);
+      responseStandard(res, 'Product not found', {}, 404, false);
       return;
     }
 
@@ -162,7 +164,7 @@ const createProduct = async (req, res) => {
     );
 
     if (!createProductSize) {
-      responseStandard(res, 'product failed to create', {}, 400, false);
+      responseStandard(res, 'Product failed to create', {}, 400, false);
       return;
     }
 
@@ -172,11 +174,11 @@ const createProduct = async (req, res) => {
     );
 
     if (!createProductDelivery) {
-      responseStandard(res, 'product failed to create', {}, 400, false);
+      responseStandard(res, 'Product failed to create', {}, 400, false);
       return;
     }
 
-    return responseStandard(res, 'product created', {}, 200, true);
+    return responseStandard(res, 'Product created', {}, 200, true);
   } catch (err) {
     console.log(err);
     responseStandard(res, err, {}, 500, false);
@@ -214,7 +216,7 @@ const updateProduct = async (req, res) => {
     console.log(productTaken);
 
     if (!productTaken) {
-      responseStandard(res, 'product not found', {}, 404, false);
+      responseStandard(res, 'Product not found', {}, 404, false);
       return;
     }
 
@@ -230,7 +232,7 @@ const updateProduct = async (req, res) => {
     console.log(updateProduct);
 
     if (!updateProduct) {
-      responseStandard(res, 'product failed to update');
+      responseStandard(res, 'Product failed to update');
       return;
     }
 
@@ -265,7 +267,7 @@ const updateProduct = async (req, res) => {
       createProductSize &&
       createProductDelivery
     ) {
-      return responseStandard(res, 'product updated', {}, 200, true);
+      return responseStandard(res, 'Product updated', {}, 200, true);
     }
   } catch (err) {
     console.log(err);
@@ -284,7 +286,7 @@ const deleteProduct = async (req, res) => {
     );
 
     if (deleteProduct && deleteProductSize && deleteProductDelivery) {
-      return responseStandard(res, 'product deleted', {}, 200, true);
+      return responseStandard(res, 'Product deleted', {}, 200, true);
     }
   } catch (err) {
     responseStandard(res, err, {}, 500, false);
@@ -299,7 +301,7 @@ const getProductInfo = async (req, res) => {
       (await productModel.getProductInfo(productId)) || [];
 
     if (productInfoTaken.length < 1) {
-      responseStandard(res, 'product not found', {}, 404, false);
+      responseStandard(res, 'Product not found', {}, 404, false);
       return;
     }
 
@@ -309,7 +311,7 @@ const getProductInfo = async (req, res) => {
       (await productModel.getDeliveryInfo(productId)) || [];
 
     if (!productInfoTaken && !productSizeTaken && !productDeliveryTaken) {
-      responseStandard(res, 'product not found', {}, 404, false);
+      responseStandard(res, 'Product not found', {}, 404, false);
     }
 
     const productInfo = {
@@ -321,7 +323,7 @@ const getProductInfo = async (req, res) => {
     if (productInfoTaken && productSizeTaken && productDeliveryTaken) {
       return responseStandard(
         res,
-        'product information',
+        'Product information',
         { productInfo },
         200,
         true,
