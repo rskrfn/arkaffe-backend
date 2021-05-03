@@ -15,17 +15,17 @@ const addTransaction = async (req, res) => {
     };
 
     if (!payment || !code || !!deliveryTable) {
-      responseStandard(res, 'some fields can not be empty', {}, 400, false);
+      responseStandard(res, 'Some fields can not be empty', {}, 400, false);
     }
 
     const addTransaction = await transactionModel.addTransaction(transaction);
 
     if (!addTransaction) {
-      responseStandard(res, 'transaction failed', {}, 400, false);
+      responseStandard(res, 'Transaction failed', {}, 400, false);
       return;
     }
 
-    return responseStandard(res, 'transaction success', {}, 200, true);
+    return responseStandard(res, 'Transaction success', {}, 200, true);
   } catch (err) {
     console.log(err);
     return responseStandard(res, err, {}, 500, false);
@@ -45,7 +45,7 @@ const updateTransaction = async (req, res) => {
       cartId,
     );
 
-    return responseStandard(res, 'transaction updated', {}, 200, true);
+    return responseStandard(res, 'Transaction updated', {}, 200, true);
   } catch (err) {
     responseStandard(res, err, {}, 500, false);
   }

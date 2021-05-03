@@ -7,7 +7,7 @@ const createCart = async (req, res) => {
     const { quantity, sizeId } = req.body;
 
     if (!quantity || !sizeId) {
-      responseStandard(res, 'some field cannot be empty', {}, 400, false);
+      responseStandard(res, 'Some field cannot be empty', {}, 400, false);
       return;
     }
 
@@ -22,7 +22,7 @@ const createCart = async (req, res) => {
 
       await cartModel.addCartItem(cartId, productId, quantity, sizeId);
 
-      responseStandard(res, 'product added to cart'), {}, 200, true;
+      responseStandard(res, 'Product added to cart'), {}, 200, true;
     }
   } catch (err) {
     console.log(err);
@@ -40,7 +40,7 @@ const deletecart = async (req, res) => {
     const deleteCartItem = await cartModel.deleteCartItem(cartId, productId);
 
     if (deleteCartItem) {
-      return responseStandard(res, 'product removed from cart', {}, 200, true);
+      return responseStandard(res, 'Product removed from cart', {}, 200, true);
     }
   } catch (err) {
     // console.log(err);

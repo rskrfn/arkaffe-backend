@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const logger = require('morgan');
+const cors = require('cors');
 
 const Router = require('./src/routers/router');
 
@@ -25,5 +26,6 @@ app.use(logger('dev'));
 app.use(jsonParser);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
+app.use(cors());
 
 app.use(Router);
