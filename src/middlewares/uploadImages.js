@@ -19,7 +19,7 @@ const userStorage = multer.diskStorage({
     cb(null, './public/images');
   },
   filename: (req, file, cb) => {
-    const nameFormat = `product-${Date.now()}${path.extname(
+    const nameFormat = `userProfile-${Date.now()}${path.extname(
       file.originalname,
     )}`;
     cb(null, nameFormat);
@@ -51,7 +51,7 @@ const uploadProductImage = multer({
 });
 
 const uploadAvatarImage = multer({
-  userStorage,
+  storage: userStorage,
   limits,
   fileFilter,
 });

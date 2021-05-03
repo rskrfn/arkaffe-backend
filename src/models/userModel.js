@@ -12,13 +12,15 @@ const getAccountInfo = (data) => {
     });
   });
 };
-const updateAccount = (data, id) => {
+const updateAccount = (qsValue, id) => {
   return new Promise((resolve, reject) => {
-    const queryString = 'UPDATE users SET WHERE id = ?';
-    connect.query(queryString, [data, id], (error, result) => {
-      if (error) return reject(error);
-      if (result.affectedRows > 0) return resolve(true);
-      return resolve(false);
+    const qs = `UPDATE users SET ? WHERE id = ?`;
+    connect.query(qs, [qsValue, id], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
     });
   });
 };
