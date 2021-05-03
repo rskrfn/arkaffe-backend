@@ -3,8 +3,8 @@ const responseStandard = require('../helpers/response');
 
 const createCart = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
-    const { quantity, sizeId } = req.body;
+    const { id: userId } = req.user;
+    const { productId, quantity, sizeId } = req.body;
 
     if (!quantity || !sizeId) {
       responseStandard(res, 'Some field cannot be empty', {}, 400, false);
@@ -26,16 +26,19 @@ const createCart = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    responseStandard(res, err, {}, 500, false);
+    responseStandard(res, err.message, {}, 500, false);
   }
 };
 
 const deletecart = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
-
-    const cartTaken = (await cartModel.getCartUser(userId)) || [];
-    const cartId = cartTaken[0].id;
+    const { id: userId } = req.user;
+    const { cartId, productId } = req.params;
+    const results = await cartModel.getCartUser(userId);
+    if (results) {
+      return responseStandard(res, 'Cart item not found!!', {}, 404, false);
+    }
+    // const cartId = cartTaken[0].id;
 
     const deleteCartItem = await cartModel.deleteCartItem(cartId, productId);
 
@@ -50,7 +53,7 @@ const deletecart = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
 
     const getCart = (await cartModel.getCart(userId)) || [];
 
