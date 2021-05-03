@@ -12,6 +12,6 @@ Router.use('/product', productRouter);
 Router.use('/cart', authentikasi, cartRouter);
 Router.use('/profile', authentikasi, userRouter);
 Router.use('/transaction', authentikasi, transactionRouter);
-Router.use('/testimonial', authentikasi, testimonialRouter);
+Router.use('/testimonial', testimonialRouter);
 
 module.exports = Router;
