@@ -4,17 +4,17 @@ const responseStandard = require('../helpers/response');
 const addTransaction = async (req, res) => {
   try {
     const { cartId } = req.params;
-    const { payment, code, setTime, deliveryTable } = req.body;
+    const { payment, setTime, deliveryTable } = req.body;
 
     const transaction = {
       cart_id: cartId,
       payment_method: payment,
-      code_transaction: code,
+      code_transaction: 'ArkaffeShop' + Date.now(),
       set_time: setTime,
       delivery_table: deliveryTable,
     };
 
-    if (!payment || !code || !!deliveryTable) {
+    if (!payment || !deliveryTable) {
       responseStandard(res, 'Some fields can not be empty', {}, 400, false);
     }
 
