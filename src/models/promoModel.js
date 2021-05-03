@@ -152,7 +152,7 @@ const updateProduct = (name, price, description, stock, url, productId) => {
 
 const deleteProduct = (productId) => {
   return new Promise((resolve, reject) => {
-    const queryString = 'DELETE FROM product WHERE id = ?';
+    const queryString = 'DELETE FROM product p WHERE p.id = ?';
 
     connect.query(queryString, productId, (err, result) => {
       if (err) {
