@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const Register = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
-
     if (!email || !phone || !password) {
       return responseStandard(
         res,
@@ -16,7 +15,6 @@ const Register = async (req, res) => {
         false,
       );
     }
-
     if (password.length < 8) {
       return responseStandard(
         res,
@@ -26,14 +24,12 @@ const Register = async (req, res) => {
         false,
       );
     }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const emailExist = await authModel.checkEmailModel(email);
     if (emailExist.length) {
       return responseStandard(res, 'Email already exists', {}, 400, false);
     }
-
     const phoneExist = await authModel.checkPhoneModel(phone);
     if (phoneExist.length) {
       return responseStandard(res, 'Phone already exists', {}, 400, false);

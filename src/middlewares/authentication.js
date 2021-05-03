@@ -1,8 +1,9 @@
-const authModel = require('../models/authModel');
 const responseStandard = require('../helpers/response');
 const jwt = require('jsonwebtoken');
+const { SECRET_KEY } = process.env;
+const authModel = require('../models/authModel')
 
-const authenticateToken = async (req, res, next) => {
+const authentikasi = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = authorization?.split(' ')[1];
@@ -11,7 +12,7 @@ const authenticateToken = async (req, res, next) => {
       return responseStandard(res, 'No token provided', {}, 400, false);
     }
 
-    const verify = jwt.verify(token, process.env.SECRET_KEY);
+    const verify = jwt.verify(token, SECRET_KEY);
     if (!verify) {
       return responseStandard(res, 'Unauthorized access', {}, 403, false);
     }
@@ -21,6 +22,7 @@ const authenticateToken = async (req, res, next) => {
       return responseStandard(res, 'You have to login', {}, 400, false);
     }
 
+    req.user = verify;
     return next();
   } catch (err) {
     console.log(err);
@@ -29,5 +31,5 @@ const authenticateToken = async (req, res, next) => {
 };
 
 module.exports = {
-  authenticateToken,
+  authentikasi,
 };
