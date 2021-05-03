@@ -63,4 +63,5 @@ module.exports = {
   addTestimonial,
   editTestimonial,
   getAllTesimonial,
+  getTestimonial,
 };

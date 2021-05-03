@@ -53,7 +53,7 @@ const getReview = async (req, res) => {
 
     return responseStandard(res, 'Review details', { reviewTaken }, 200, true);
   } catch (err) {
-    return responseStandard(res, err, {}, 500, false);
+    return responseStandard(res, err.message, {}, 500, false);
   }
 };
 
