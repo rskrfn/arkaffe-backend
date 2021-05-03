@@ -10,10 +10,15 @@ const getProduct = (
 ) => {
   return new Promise((resolve, reject) => {
     let queryString = [
-      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
+      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ?',
     ];
 
-    let paramData = [searchValue, category];
+    let paramData = [searchValue];
+
+    if (category) {
+      queryString.push('AND c.name = ?');
+      paramData.push(category);
+    }
 
     if (sortBy && order) {
       queryString.push('ORDER BY ? ?');
@@ -29,8 +34,13 @@ const getProduct = (
       if (err) return reject(err);
 
       let queryCount = [
-        'SELECT COUNT(*) AS total FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
+        'SELECT COUNT(*) AS total FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ?',
       ];
+
+      if (category) {
+        queryCount.push('AND c.name =?');
+      }
+
       if (sortBy && order) {
         queryCount.push('ORDER BY ? ?');
       }

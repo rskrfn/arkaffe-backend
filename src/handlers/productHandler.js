@@ -58,20 +58,22 @@ const getProduct = async (req, res) => {
       next:
         pageNumber === totalPage
           ? null
-          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
-              pageNumber + 1
-            }&limit=${limitPage}`,
+          : `${baseUrl}?search=&category=${!category ? '' : category}&sort=${
+              !sort ? '' : sort
+            }&page=${pageNumber + 1}&limit=${limitPage}`,
       prev:
         pageNumber === 1
           ? null
-          : `${baseUrl}?search=&category=${category}&sort=${sort}&page=${
-              pageNumber - 1
-            }&limit=${limitPage}`,
+          : `${baseUrl}?search=&category=${!category ? '' : category}&sort=${
+              !sort ? '' : sort
+            }&page=${pageNumber - 1}&limit=${limitPage}`,
     };
 
     return responseStandard(
       res,
-      `${category} product list`,
+      `${
+        !category ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)
+      } product list`,
       {
         data: productTaken.data,
         info,

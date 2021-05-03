@@ -62,9 +62,25 @@ const deleteCartItem = (cartId, productId) => {
   });
 };
 
+const getCart = (userId) => {
+  return new Promise((resolve, reject) => {
+    const queryString =
+      'SELECT ci.cart_id, ci.product_id, p.name, p.price, ci.quantity, ci.size_id  FROM cart_item ci LEFT JOIN cart c ON ci.cart_id = c.id LEFT JOIN product p ON ci.product_id = p.id WHERE c.users_id = ?';
+
+    connect.query(queryString, userId, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   addCart,
   getCartUser,
   addCartItem,
   deleteCartItem,
+  getCart,
 };
