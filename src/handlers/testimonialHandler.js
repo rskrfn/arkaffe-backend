@@ -57,8 +57,19 @@ const getReview = async (req, res) => {
   }
 };
 
+const getAllReview = async (req, res) => {
+  try {
+    const getAllReview = (await testimonialModel.getAllTesimonial()) || [];
+    return responseStandard(res, 'All review', { getAllReview }, 200, true);
+  } catch (err) {
+    console.log(err);
+    return responseStandard(res, err, {}, 500, false);
+  }
+};
+
 module.exports = {
   createReview,
   editReview,
   getReview,
+  getAllReview,
 };
