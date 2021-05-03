@@ -48,7 +48,24 @@ const deletecart = async (req, res) => {
   }
 };
 
+const getCart = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const getCart = (await cartModel.getCart(userId)) || [];
+
+    if (getCart.length < 1) {
+      return responseStandard(res, 'Your cart is empty', {}, 400, false);
+    }
+
+    return responseStandard(res, 'Cart list', { getCart }, 200, true);
+  } catch (err) {
+    return responseStandard(res, err, {}, 500, false);
+  }
+};
+
 module.exports = {
   createCart,
   deletecart,
+  getCart,
 };
