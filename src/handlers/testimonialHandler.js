@@ -3,7 +3,7 @@ const responseStandard = require('../helpers/response');
 
 const createReview = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const { description, rating } = req.body;
 
     if (!description || !rating) {
@@ -31,7 +31,7 @@ const createReview = async (req, res) => {
 
 const editReview = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id: userId } = req.user;
     const { description, rating } = req.body;
 
     await testimonialModel.editTestimonial(description, rating, userId);

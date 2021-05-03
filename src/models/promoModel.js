@@ -10,15 +10,10 @@ const getProduct = (
 ) => {
   return new Promise((resolve, reject) => {
     let queryString = [
-      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ?',
+      'SELECT p.id, p.image_product, p.name, p.price FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
     ];
 
-    let paramData = [searchValue];
-
-    if (category) {
-      queryString.push('AND c.name = ?');
-      paramData.push(category);
-    }
+    let paramData = [searchValue, category];
 
     if (sortBy && order) {
       queryString.push('ORDER BY ? ?');
@@ -34,13 +29,8 @@ const getProduct = (
       if (err) return reject(err);
 
       let queryCount = [
-        'SELECT COUNT(*) AS total FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ?',
+        'SELECT COUNT(*) AS total FROM product p LEFT JOIN category c ON p.category_id = c.id WHERE p.name LIKE ? AND c.name =?',
       ];
-
-      if (category) {
-        queryCount.push('AND c.name =?');
-      }
-
       if (sortBy && order) {
         queryCount.push('ORDER BY ? ?');
       }
@@ -162,7 +152,7 @@ const updateProduct = (name, price, description, stock, url, productId) => {
 
 const deleteProduct = (productId) => {
   return new Promise((resolve, reject) => {
-    const queryString = 'DELETE FROM product WHERE id = ?';
+    const queryString = 'DELETE FROM product p WHERE p.id = ?';
 
     connect.query(queryString, productId, (err, result) => {
       if (err) {
