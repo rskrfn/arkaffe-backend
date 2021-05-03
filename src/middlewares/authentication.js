@@ -1,9 +1,9 @@
 const responseStandard = require('../helpers/response');
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = process.env;
-const authModel = require('../models/authModel')
+const authModel = require('../models/authModel');
 
-const authentikasi = (req, res, next) => {
+const authentikasi = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = authorization?.split(' ')[1];
