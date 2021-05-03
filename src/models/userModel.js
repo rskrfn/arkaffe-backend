@@ -1,4 +1,4 @@
-const connect = require('../database/dbMysql');
+const connect = require('../database/dbMySql');
 
 const getAccountInfo = (data) => {
   return new Promise((resolve, reject) => {
