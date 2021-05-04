@@ -1,8 +1,11 @@
 const Router = require('express').Router();
 const testimonialHandler = require('../handlers/testimonialHandler');
+const { authentikasi } = require('../middlewares/authentication');
+const { isCustomer } = require('../middlewares/authorization');
 
+Router.get('/', testimonialHandler.getAllReview);
 Router.get('/:userId', testimonialHandler.getReview);
-Router.post('/:userId', testimonialHandler.createReview);
-Router.patch('/:userId', testimonialHandler.editReview);
+Router.post('/give', authentikasi, isCustomer, testimonialHandler.createReview);
+Router.patch('/edit', authentikasi, isCustomer, testimonialHandler.editReview);
 
 module.exports = Router;
