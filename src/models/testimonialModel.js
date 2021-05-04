@@ -44,8 +44,24 @@ const getTestimonial = (userId) => {
   });
 };
 
+const getAllTesimonial = () => {
+  return new Promise((resolve, reject) => {
+    const queryString =
+      'SELECT u.id, u.photo_profile AS image, u.username, t.description AS message, t.rating FROM testimonial t LEFT JOIN users u ON t.users_id = u.id';
+
+    connect.query(queryString, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   addTestimonial,
   editTestimonial,
+  getAllTesimonial,
   getTestimonial,
 };
