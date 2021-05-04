@@ -12,6 +12,7 @@ const getProfileInfo = async (req, res) => {
       return responseStandard(res, 'User profile not found!!', {}, 404, false);
     }
   } catch (error) {
+    console.log(err);
     return responseStandard(res, error, 500, false);
   }
 };
