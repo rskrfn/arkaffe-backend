@@ -24,3 +24,7 @@ In the current pandemic, business processes are required to keep running so they
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:8080/)
 8. You can see all the end point [here](#end-point)
+
+## Postman collection
+
+<a href="https://documenter.getpostman.com/view/15102825/TzK2Yt8F">Link here</a>
